@@ -6,6 +6,7 @@ export interface Project {
   id: number
   title: string
   description: string | null
+  category: 'single_family' | 'multi_family_commercial' | 'land_entitlements'
   pdf_path: string
   pdf_original_name: string
   pdf_size: number | null

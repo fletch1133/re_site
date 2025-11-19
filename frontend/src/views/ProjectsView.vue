@@ -1,12 +1,50 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useProjectsStore } from '../stores/projects'
+import { onMounted, computed } from 'vue'
+import { useProjectsStore, type Project } from '../stores/projects'
 
 const projectsStore = useProjectsStore()
 
 onMounted(() => {
   projectsStore.fetchProjects()
 })
+
+const singleFamilyProjects = computed(() =>
+  projectsStore.projects.filter((p: Project) => p.category === 'single_family')
+)
+
+const multiFamilyCommercialProjects = computed(() =>
+  projectsStore.projects.filter((p: Project) => p.category === 'multi_family_commercial')
+)
+
+const landEntitlementsProjects = computed(() =>
+  projectsStore.projects.filter((p: Project) => p.category === 'land_entitlements')
+)
+
+const getCategoryTitle = (category: string) => {
+  switch (category) {
+    case 'single_family':
+      return 'Single Family'
+    case 'multi_family_commercial':
+      return 'Multi-Family/Commercial'
+    case 'land_entitlements':
+      return 'Land Entitlements'
+    default:
+      return category
+  }
+}
+
+const getCategoryDescription = (category: string) => {
+  switch (category) {
+    case 'single_family':
+      return 'Residential single-family home developments'
+    case 'multi_family_commercial':
+      return 'Multi-family residential and commercial property developments'
+    case 'land_entitlements':
+      return 'Land acquisition, zoning, and entitlement projects'
+    default:
+      return ''
+  }
+}
 </script>
 
 <template>
@@ -34,48 +72,167 @@ onMounted(() => {
           <p class="empty-subtitle">Check back soon for updates.</p>
         </div>
 
-        <div v-else class="projects-grid">
-          <div v-for="project in projectsStore.projects" :key="project.id" class="project-card">
-            <a
-              :href="projectsStore.getPdfUrl(project.pdf_path)"
-              target="_blank"
-              class="pdf-preview-link"
-            >
-              <div class="pdf-preview">
-                <iframe
-                  :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
-                  class="pdf-iframe"
-                  :title="project.title"
-                  scrolling="no"
-                ></iframe>
-                <div class="preview-overlay">
-                  <div class="overlay-content">
-                    <div class="overlay-icon">
-                      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                        <line x1="16" y1="13" x2="8" y2="13"/>
-                        <line x1="16" y1="17" x2="8" y2="17"/>
-                        <polyline points="10 9 9 9 8 9"/>
-                      </svg>
+        <div v-else class="categories-container">
+          <!-- Single Family Section -->
+          <div v-if="singleFamilyProjects.length > 0" class="category-section">
+            <div class="category-header">
+              <h2 class="category-title">{{ getCategoryTitle('single_family') }}</h2>
+              <p class="category-description">{{ getCategoryDescription('single_family') }}</p>
+            </div>
+            <div class="projects-grid">
+              <div v-for="project in singleFamilyProjects" :key="project.id" class="project-card">
+                <a
+                  :href="projectsStore.getPdfUrl(project.pdf_path)"
+                  target="_blank"
+                  class="pdf-preview-link"
+                >
+                  <div class="pdf-preview">
+                    <iframe
+                      :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
+                      class="pdf-iframe"
+                      :title="project.title"
+                      scrolling="no"
+                    ></iframe>
+                    <div class="preview-overlay">
+                      <div class="overlay-content">
+                        <div class="overlay-icon">
+                          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                          </svg>
+                        </div>
+                        <span class="overlay-text">View Full Document</span>
+                        <span class="overlay-subtext">Click to open PDF</span>
+                      </div>
                     </div>
-                    <span class="overlay-text">View Full Document</span>
-                    <span class="overlay-subtext">Click to open PDF</span>
+                  </div>
+                </a>
+                <div class="project-content">
+                  <h3 class="project-title">{{ project.title }}</h3>
+                  <p v-if="project.description" class="project-description">{{ project.description }}</p>
+                  <div class="project-footer">
+                    <div class="project-meta">
+                      <span class="meta-icon">📄</span>
+                      <span class="meta-text">{{ project.pdf_original_name }}</span>
+                    </div>
+                    <div v-if="project.pdf_size" class="project-size">
+                      <span class="size-icon">💾</span>
+                      <span class="size-text">{{ (project.pdf_size / 1024 / 1024).toFixed(2) }} MB</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </a>
-            <div class="project-content">
-              <h3 class="project-title">{{ project.title }}</h3>
-              <p v-if="project.description" class="project-description">{{ project.description }}</p>
-              <div class="project-footer">
-                <div class="project-meta">
-                  <span class="meta-icon">📄</span>
-                  <span class="meta-text">{{ project.pdf_original_name }}</span>
+            </div>
+          </div>
+
+          <!-- Multi-Family/Commercial Section -->
+          <div v-if="multiFamilyCommercialProjects.length > 0" class="category-section">
+            <div class="category-header">
+              <h2 class="category-title">{{ getCategoryTitle('multi_family_commercial') }}</h2>
+              <p class="category-description">{{ getCategoryDescription('multi_family_commercial') }}</p>
+            </div>
+            <div class="projects-grid">
+              <div v-for="project in multiFamilyCommercialProjects" :key="project.id" class="project-card">
+                <a
+                  :href="projectsStore.getPdfUrl(project.pdf_path)"
+                  target="_blank"
+                  class="pdf-preview-link"
+                >
+                  <div class="pdf-preview">
+                    <iframe
+                      :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
+                      class="pdf-iframe"
+                      :title="project.title"
+                      scrolling="no"
+                    ></iframe>
+                    <div class="preview-overlay">
+                      <div class="overlay-content">
+                        <div class="overlay-icon">
+                          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                          </svg>
+                        </div>
+                        <span class="overlay-text">View Full Document</span>
+                        <span class="overlay-subtext">Click to open PDF</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+                <div class="project-content">
+                  <h3 class="project-title">{{ project.title }}</h3>
+                  <p v-if="project.description" class="project-description">{{ project.description }}</p>
+                  <div class="project-footer">
+                    <div class="project-meta">
+                      <span class="meta-icon">📄</span>
+                      <span class="meta-text">{{ project.pdf_original_name }}</span>
+                    </div>
+                    <div v-if="project.pdf_size" class="project-size">
+                      <span class="size-icon">💾</span>
+                      <span class="size-text">{{ (project.pdf_size / 1024 / 1024).toFixed(2) }} MB</span>
+                    </div>
+                  </div>
                 </div>
-                <div v-if="project.pdf_size" class="project-size">
-                  <span class="size-icon">💾</span>
-                  <span class="size-text">{{ (project.pdf_size / 1024 / 1024).toFixed(2) }} MB</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Land Entitlements Section -->
+          <div v-if="landEntitlementsProjects.length > 0" class="category-section">
+            <div class="category-header">
+              <h2 class="category-title">{{ getCategoryTitle('land_entitlements') }}</h2>
+              <p class="category-description">{{ getCategoryDescription('land_entitlements') }}</p>
+            </div>
+            <div class="projects-grid">
+              <div v-for="project in landEntitlementsProjects" :key="project.id" class="project-card">
+                <a
+                  :href="projectsStore.getPdfUrl(project.pdf_path)"
+                  target="_blank"
+                  class="pdf-preview-link"
+                >
+                  <div class="pdf-preview">
+                    <iframe
+                      :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
+                      class="pdf-iframe"
+                      :title="project.title"
+                      scrolling="no"
+                    ></iframe>
+                    <div class="preview-overlay">
+                      <div class="overlay-content">
+                        <div class="overlay-icon">
+                          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                          </svg>
+                        </div>
+                        <span class="overlay-text">View Full Document</span>
+                        <span class="overlay-subtext">Click to open PDF</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+                <div class="project-content">
+                  <h3 class="project-title">{{ project.title }}</h3>
+                  <p v-if="project.description" class="project-description">{{ project.description }}</p>
+                  <div class="project-footer">
+                    <div class="project-meta">
+                      <span class="meta-icon">📄</span>
+                      <span class="meta-text">{{ project.pdf_original_name }}</span>
+                    </div>
+                    <div v-if="project.pdf_size" class="project-size">
+                      <span class="size-icon">💾</span>
+                      <span class="size-text">{{ (project.pdf_size / 1024 / 1024).toFixed(2) }} MB</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -188,6 +345,39 @@ onMounted(() => {
 .empty-subtitle {
   font-size: 1rem;
   color: #9ca3af;
+}
+
+.categories-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+}
+
+.category-section {
+  width: 100%;
+}
+
+.category-header {
+  margin-bottom: 3rem;
+  text-align: center;
+  padding-bottom: 2rem;
+  border-bottom: 3px solid #2c5282;
+}
+
+.category-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.75rem;
+  letter-spacing: -1px;
+}
+
+.category-description {
+  font-size: 1.125rem;
+  color: #4a5568;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
 }
 
 .projects-grid {
@@ -409,6 +599,23 @@ onMounted(() => {
 
   .projects-section {
     padding: 3rem 0 4rem;
+  }
+
+  .categories-container {
+    gap: 3rem;
+  }
+
+  .category-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .category-title {
+    font-size: 2rem;
+  }
+
+  .category-description {
+    font-size: 1rem;
   }
 
   .projects-grid {

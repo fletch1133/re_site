@@ -9,6 +9,7 @@ class Project extends Model
     protected $fillable = [
         'title',
         'description',
+        'category',
         'pdf_path',
         'pdf_original_name',
         'pdf_size',

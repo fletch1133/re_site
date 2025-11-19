@@ -29,6 +29,7 @@ class ProjectController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'category' => 'required|in:single_family,multi_family_commercial,land_entitlements',
             'pdf' => 'required|file|mimes:pdf|max:10240', // 10MB max
             'is_published' => 'boolean',
         ]);
@@ -39,6 +40,7 @@ class ProjectController extends Controller
         $project = Project::create([
             'title' => $request->title,
             'description' => $request->description,
+            'category' => $request->category,
             'pdf_path' => $pdfPath,
             'pdf_original_name' => $pdf->getClientOriginalName(),
             'pdf_size' => $pdf->getSize(),
@@ -67,6 +69,7 @@ class ProjectController extends Controller
         $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
+            'category' => 'sometimes|in:single_family,multi_family_commercial,land_entitlements',
             'pdf' => 'sometimes|file|mimes:pdf|max:10240',
             'is_published' => 'boolean',
         ]);
@@ -83,7 +86,7 @@ class ProjectController extends Controller
             $project->pdf_size = $pdf->getSize();
         }
 
-        $project->fill($request->only(['title', 'description', 'is_published']));
+        $project->fill($request->only(['title', 'description', 'category', 'is_published']));
         $project->save();
 
         return response()->json($project);

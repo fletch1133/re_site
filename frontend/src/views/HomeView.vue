@@ -4,9 +4,9 @@
       <div class="hero-overlay"></div>
       <div class="container">
         <div class="hero-content">
-          <h1 class="hero-title">Real Estate Development Excellence</h1>
+          <h1 class="hero-title">Strategic Real Estate Development</h1>
           <p class="hero-subtitle">
-            Transforming visions into landmark properties through strategic planning and innovative execution
+            Transforming solid concepts into feasible, high-quality developments through tactical planning and clear analysis.
           </p>
           <div class="hero-actions">
             <router-link to="/projects" class="btn btn-primary">VIEW PORTFOLIO</router-link>

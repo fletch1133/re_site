@@ -70,11 +70,6 @@ async function handleLogin() {
           </button>
         </form>
 
-        <div class="demo-credentials">
-          <p><strong>Demo Credentials:</strong></p>
-          <p>Email: admin@example.com</p>
-          <p>Password: password</p>
-        </div>
       </div>
     </div>
   </div>

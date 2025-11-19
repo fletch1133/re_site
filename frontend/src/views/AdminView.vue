@@ -9,6 +9,7 @@ const showForm = ref(false)
 const editingProject = ref<number | null>(null)
 const title = ref('')
 const description = ref('')
+const category = ref<'single_family' | 'multi_family_commercial' | 'land_entitlements'>('single_family')
 const pdfFile = ref<File | null>(null)
 const isPublished = ref(true)
 const formError = ref('')
@@ -43,6 +44,7 @@ function openEditForm(project: any) {
   editingProject.value = project.id
   title.value = project.title
   description.value = project.description || ''
+  category.value = project.category || 'single_family'
   isPublished.value = project.is_published
   pdfFile.value = null
   showForm.value = true
@@ -52,6 +54,7 @@ function resetForm() {
   editingProject.value = null
   title.value = ''
   description.value = ''
+  category.value = 'single_family'
   pdfFile.value = null
   isPublished.value = true
   formError.value = ''
@@ -124,6 +127,7 @@ async function handleSubmit() {
   const formData = new FormData()
   formData.append('title', title.value)
   formData.append('description', description.value)
+  formData.append('category', category.value)
   formData.append('is_published', isPublished.value ? '1' : '0')
 
   if (pdfFile.value) {
@@ -228,6 +232,11 @@ async function handleDelete(id: number) {
               <span class="badge" :class="project.is_published ? 'badge-success' : 'badge-warning'">
                 {{ project.is_published ? 'Published' : 'Draft' }}
               </span>
+              <span class="badge badge-info">
+                {{ project.category === 'single_family' ? 'Single Family' :
+                   project.category === 'multi_family_commercial' ? 'Multi-Family/Commercial' :
+                   'Land Entitlements' }}
+              </span>
               <span class="file-name">{{ project.pdf_original_name }}</span>
             </div>
           </div>
@@ -276,6 +285,20 @@ async function handleDelete(id: number) {
                 rows="4"
                 placeholder="Enter project description"
               ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="category">Project Category *</label>
+              <select
+                id="category"
+                v-model="category"
+                required
+                class="form-control"
+              >
+                <option value="single_family">Single Family</option>
+                <option value="multi_family_commercial">Multi-Family/Commercial</option>
+                <option value="land_entitlements">Land Entitlements</option>
+              </select>
             </div>
 
             <div class="form-group">
@@ -496,6 +519,11 @@ async function handleDelete(id: number) {
 .badge-warning {
   background: #fff3cd;
   color: #856404;
+}
+
+.badge-info {
+  background: #d1ecf1;
+  color: #0c5460;
 }
 
 .file-name {
