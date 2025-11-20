@@ -14,6 +14,10 @@ dist-ssr
 coverage
 *.local
 
+# Environment files (keep .env.development and .env.production in git)
+.env
+.env.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

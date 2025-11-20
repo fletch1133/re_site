@@ -93,7 +93,8 @@ export const useProjectsStore = defineStore('projects', () => {
   }
 
   function getPdfUrl(pdfPath: string) {
-    return `http://localhost:8000/storage/${pdfPath}`
+    const storageBaseUrl = import.meta.env.VITE_STORAGE_BASE_URL || 'http://localhost:8000/storage'
+    return `${storageBaseUrl}/${pdfPath}`
   }
 
   return {

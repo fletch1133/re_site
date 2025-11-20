@@ -17,7 +17,8 @@ const error = ref('')
 const showFullscreen = ref(false)
 
 const getPdfUrl = (path: string) => {
-  return `http://localhost:8000/storage/${path}`
+  const storageBaseUrl = import.meta.env.VITE_STORAGE_BASE_URL || 'http://localhost:8000/storage'
+  return `${storageBaseUrl}/${path}`
 }
 
 async function fetchResume() {

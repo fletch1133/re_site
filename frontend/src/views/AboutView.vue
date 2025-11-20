@@ -1,3 +1,7 @@
+<script setup>
+import profileImage from '../../image/Anthony Fletcher2small.jpeg'
+</script>
+
 <template>
   <div class="about">
     <section class="page-header">
@@ -9,10 +13,16 @@
 
     <section class="content-section">
       <div class="container">
+        <div class="profile-section">
+          <div class="profile-image-wrapper">
+            <img :src="profileImage" alt="Anthony Fletcher" class="profile-image" />
+          </div>
+        </div>
+
         <div class="intro-block">
           <h2 class="section-heading">Real Estate Development Professional</h2>
           <p class="lead-text">
-            A real estate development professional with a solid foundation in residential projects, combining practical field exposure with disciplined financial analysis. I leverage job-site experience and detailed pro forma modeling to support well-informed, efficient, and financially grounded development decisions.
+            Hi, my name is Anthony Fletcher! I'm real estate development professional with a solid foundation in residential projects, combining practical field exposure with disciplined financial analysis. I leverage job-site experience and detailed pro forma modeling to support well-informed, efficient, and financially grounded development decisions.
           </p>
         </div>
 
@@ -160,6 +170,34 @@ I bring strengths in financial modeling, project evaluation, and structured deve
 
 .content-section {
   padding: 5rem 0 6rem;
+}
+
+.profile-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4rem;
+}
+
+.profile-image-wrapper {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(44, 82, 130, 0.2);
+  transition: all 0.3s ease;
+}
+
+.profile-image-wrapper:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 40px rgba(44, 82, 130, 0.3);
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
 }
 
 .intro-block {
@@ -338,6 +376,11 @@ I bring strengths in financial modeling, project evaluation, and structured deve
     padding: 0 2rem;
   }
 
+  .profile-image-wrapper {
+    width: 220px;
+    height: 220px;
+  }
+
   .content-grid {
     gap: 2rem;
   }
@@ -367,6 +410,15 @@ I bring strengths in financial modeling, project evaluation, and structured deve
 
   .content-section {
     padding: 3rem 0 4rem;
+  }
+
+  .profile-section {
+    margin-bottom: 3rem;
+  }
+
+  .profile-image-wrapper {
+    width: 180px;
+    height: 180px;
   }
 
   .intro-block {

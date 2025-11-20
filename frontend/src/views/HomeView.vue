@@ -22,7 +22,7 @@
           <!-- <h2 class="section-title">Building Tomorrow's Landmarks</h2> -->
           <h2 class="section-title">Building Desirable Communities</h2>
           <p class="intro-text">
-            I’m a real estate development professional with experience in financial analysis, pro forma modeling, and strategic project planning, grounded in hands-on construction and site experience. I leverage this combination of field insight and disciplined evaluation to support the successful planning and execution of high-quality, profitable development projects.
+            My name is Anthony Fletcher. I’m a real estate development professional with experience in financial analysis, pro forma modeling, and strategic project planning, grounded in hands-on construction and site experience. I leverage this combination of field insight and disciplined evaluation to support the successful planning and execution of high-quality, profitable development projects.
           </p>
           <router-link to="/about" class="link-arrow">Learn more about my approach →</router-link>
         </div>
