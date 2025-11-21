@@ -4,9 +4,9 @@
       <div class="hero-overlay"></div>
       <div class="container">
         <div class="hero-content">
-          <h1 class="hero-title">Strategic Real Estate Development</h1>
+          <h1 class="hero-title">Real Estate Development Analysis</h1>
           <p class="hero-subtitle">
-            Transforming solid concepts into feasible, high-quality developments through tactical planning and clear analysis.
+            Transforming market data and financial insights into actionable development strategies through rigorous analysis and creative problem-solving.
           </p>
           <div class="hero-actions">
             <router-link to="/projects" class="btn btn-primary">VIEW PORTFOLIO</router-link>

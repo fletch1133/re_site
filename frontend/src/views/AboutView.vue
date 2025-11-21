@@ -98,7 +98,7 @@ I bring strengths in financial modeling, project evaluation, and structured deve
                 </svg>
               </div>
               <h4>Residential Development Focus</h4>
-              <p>Single-family and small-scale residential project expertise</p>
+              <p>Single-family and small-scale residential project experience</p>
             </div>
           </div>
         </div>

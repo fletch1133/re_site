@@ -52,7 +52,7 @@ const getCategoryDescription = (category: string) => {
     <section class="page-header">
       <div class="container">
         <h1 class="page-title">Project Portfolio</h1>
-        <p class="page-subtitle">Comprehensive documentation of completed real estate developments</p>
+        <p class="page-subtitle">Comprehensive documentation, analysis and case studies of proposed real estate developments</p>
       </div>
     </section>
 
