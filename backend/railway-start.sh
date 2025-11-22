@@ -54,6 +54,8 @@ echo "🌐 Starting web server on port ${PORT}..."
 echo "📍 Document root: public/"
 echo "🔧 Environment: ${APP_ENV:-production}"
 echo "🔗 Server will be available at: http://0.0.0.0:${PORT}"
+echo "⚠️  IMPORTANT: Railway expects the app on this port!"
+echo "🔍 Railway PORT env var: ${PORT}"
 echo ""
 
 # Test if we can reach the app before starting the server
