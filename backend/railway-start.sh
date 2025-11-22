@@ -40,9 +40,17 @@ php artisan cache:clear || echo "Cache clear failed"
 echo "🗄️  Running database migrations..."
 php artisan migrate --force --no-interaction || echo "⚠️  Migration failed or no migrations to run"
 
-# Create admin user if it doesn't exist
-echo "👤 Creating/updating admin user..."
-php artisan admin:create "${ADMIN_EMAIL:-admin@example.com}" "${ADMIN_PASSWORD:-password123}" 2>/dev/null || echo "✓ Admin user operation completed"
+# Delete the old default admin user if it exists
+echo "🗑️  Removing old default admin user..."
+php artisan user:delete "admin@example.com" 2>/dev/null || echo "✓ No default admin user to remove"
+
+# Create admin user only if ADMIN_EMAIL is set
+if [ -n "$ADMIN_EMAIL" ]; then
+    echo "👤 Creating/updating admin user with email: $ADMIN_EMAIL"
+    php artisan admin:create "$ADMIN_EMAIL" "${ADMIN_PASSWORD:-password123}" || echo "✓ Admin user operation completed"
+else
+    echo "⚠️  ADMIN_EMAIL not set - skipping admin user creation"
+fi
 
 # List all users for debugging
 echo "📋 Current users in database:"
