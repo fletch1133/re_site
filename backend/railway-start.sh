@@ -13,8 +13,10 @@ fi
 echo "📁 Setting up storage directories..."
 mkdir -p storage/framework/{sessions,views,cache,testing}
 mkdir -p storage/logs
+mkdir -p storage/app/public
 mkdir -p bootstrap/cache
-chmod -R 775 storage bootstrap/cache
+chmod -R 777 storage bootstrap/cache
+echo "✅ Storage permissions: 777"
 
 # Create storage link if it doesn't exist
 if [ ! -L "public/storage" ]; then
@@ -22,10 +24,10 @@ if [ ! -L "public/storage" ]; then
     php artisan storage:link || echo "Storage link already exists or failed"
 fi
 
-# Override session driver to use file instead of database
-# This prevents issues with database sessions on Railway
-export SESSION_DRIVER=file
-export CACHE_STORE=file
+# Override session driver to use cookie instead of database/file
+# Cookie sessions don't require file writes and are more reliable
+export SESSION_DRIVER=cookie
+export CACHE_STORE=array
 
 # Clear any cached config first (important!)
 echo "🧹 Clearing cached config..."
