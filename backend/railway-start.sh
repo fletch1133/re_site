@@ -73,22 +73,13 @@ echo "🧪 Testing Laravel bootstrap..."
 php artisan --version || echo "⚠️  Laravel bootstrap failed"
 
 echo ""
-echo "✅ Starting server with PHP built-in server..."
+echo "✅ Starting Laravel server..."
 echo "📝 Request logs will appear below:"
 echo "🔍 If you don't see request logs after accessing the site, Railway isn't forwarding traffic!"
 echo "⚠️  DEBUG MODE ENABLED - Errors will be visible"
 echo ""
 
-# Test if the port is available
-if command -v nc &> /dev/null; then
-    nc -zv 0.0.0.0 ${PORT} 2>&1 || echo "Port ${PORT} is available"
-fi
-
-# Enable PHP error reporting
-export PHP_CLI_SERVER_WORKERS=1
-
-# Use PHP built-in server with Laravel's server.php router
-# This is more reliable than artisan serve for production
-# Redirect both stdout and stderr to see all errors
-exec php -d display_errors=1 -d error_reporting=E_ALL -S 0.0.0.0:${PORT} -t public server.php 2>&1
+# Use artisan serve which handles Laravel routing and responses properly
+# The --no-reload flag prevents file watching which can cause issues
+exec php artisan serve --host=0.0.0.0 --port=${PORT} --no-reload 2>&1
 
