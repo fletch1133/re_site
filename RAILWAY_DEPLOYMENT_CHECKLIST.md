@@ -60,6 +60,12 @@ Go to: Backend Service → Variables tab
 - [ ] `CACHE_STORE` = `database`
 - [ ] `QUEUE_CONNECTION` = `database`
 
+#### File Storage (CRITICAL!)
+
+- [ ] `FILESYSTEM_DISK` = `public`
+  - **IMPORTANT:** This must be set to `public` for resume and project PDFs to be accessible
+  - Without this, you'll get 404 errors when trying to view uploaded files
+
 ## 🚀 Deploy
 
 - [ ] Trigger deployment (push to GitHub or click "Deploy" in Railway)

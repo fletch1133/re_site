@@ -94,6 +94,14 @@ Railway provides PostgreSQL. Use these settings:
     database
     ```
 
+### File Storage (CRITICAL!)
+
+17. **FILESYSTEM_DISK**
+    ```
+    public
+    ```
+    **⚠️ IMPORTANT:** This MUST be set to `public` for resume and project PDFs to be accessible via web URLs. Without this, uploaded files will return 404 errors.
+
 ## 📋 Step-by-Step Railway Setup
 
 ### Step 1: Add PostgreSQL Database

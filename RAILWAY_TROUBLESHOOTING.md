@@ -83,6 +83,29 @@ If `/api/projects` returns 404:
 3. Make sure `routes/api.php` exists
 4. Try clearing route cache by redeploying
 
+### Error: 404 Not Found on Uploaded PDFs (Resume/Projects)
+
+If uploaded PDFs return 404 errors when trying to view them:
+
+**Root Cause:** `FILESYSTEM_DISK` environment variable is not set to `public`
+
+**Solution:**
+1. Go to Railway → Your Service → Variables
+2. Add or update: `FILESYSTEM_DISK=public`
+3. Redeploy the application
+4. The storage link is automatically created by `railway-start.sh`
+
+**Why this happens:**
+- When `FILESYSTEM_DISK=local`, files are stored in `storage/app/private` (not web accessible)
+- When `FILESYSTEM_DISK=public`, files are stored in `storage/app/public` (web accessible via `/storage` URL)
+- The symlink `public/storage` → `storage/app/public` makes files accessible
+
+**To verify the fix:**
+1. Upload a resume via Admin panel
+2. Check the URL in browser console (should be: `https://your-domain.com/storage/resume/filename.pdf`)
+3. Try accessing the URL directly - should download/display the PDF
+4. If still 404, check Railway logs to ensure storage link was created
+
 ### Error: 500 Internal Server Error
 
 **Solution:**
@@ -134,7 +157,11 @@ DB_PASSWORD=${{Postgres.PGPASSWORD}}
 SESSION_DRIVER=database
 CACHE_STORE=database
 QUEUE_CONNECTION=database
+
+FILESYSTEM_DISK=public
 ```
+
+**⚠️ CRITICAL:** Make sure `FILESYSTEM_DISK=public` is set, otherwise uploaded PDFs will return 404 errors!
 
 ### Step 3: Add PostgreSQL Database
 
