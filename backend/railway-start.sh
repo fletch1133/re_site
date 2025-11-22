@@ -40,6 +40,10 @@ php artisan cache:clear || echo "Cache clear failed"
 echo "🗄️  Running database migrations..."
 php artisan migrate --force --no-interaction || echo "⚠️  Migration failed or no migrations to run"
 
+# Create admin user if it doesn't exist
+echo "👤 Creating admin user if needed..."
+php artisan admin:create "${ADMIN_EMAIL:-admin@example.com}" "${ADMIN_PASSWORD:-password123}" 2>/dev/null || echo "✓ Admin user already exists or creation skipped"
+
 # DON'T cache config in production - it can cause issues with Railway env vars
 echo "⚡ Optimizing routes and views..."
 php artisan route:cache
