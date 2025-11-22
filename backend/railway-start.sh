@@ -59,9 +59,16 @@ echo ""
 echo "🧪 Testing if Laravel can boot..."
 php -r "require 'vendor/autoload.php'; echo 'PHP OK\n';" || echo "⚠️  PHP test failed"
 
-echo ""
-echo "✅ Starting server..."
+# Test if we can load the Laravel app
+echo "🧪 Testing Laravel bootstrap..."
+php artisan --version || echo "⚠️  Laravel bootstrap failed"
 
-# Use artisan serve - it handles Laravel routing properly
-exec php artisan serve --host=0.0.0.0 --port=${PORT} --no-reload 2>&1
+echo ""
+echo "✅ Starting server with PHP built-in server..."
+echo "📝 Request logs will appear below:"
+echo ""
+
+# Use PHP built-in server with Laravel's server.php router
+# This is more reliable than artisan serve for production
+exec php -S 0.0.0.0:${PORT} -t public server.php 2>&1
 
