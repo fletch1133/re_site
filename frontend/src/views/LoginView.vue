@@ -6,8 +6,8 @@ import { useAuthStore } from '../stores/auth'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const email = ref('admin@example.com')
-const password = ref('password')
+const email = ref('')
+const password = ref('')
 const error = ref('')
 const loading = ref(false)
 
@@ -48,7 +48,7 @@ async function handleLogin() {
               v-model="email"
               type="email"
               required
-              placeholder="admin@example.com"
+              placeholder="Enter your email"
               class="form-control"
             />
           </div>
