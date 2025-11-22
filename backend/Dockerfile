@@ -41,5 +41,5 @@ RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs boots
 EXPOSE 8000
 
 # Start command - use exec form to ensure proper signal handling
-CMD ["sh", "-c", "php artisan migrate --force && (php artisan db:seed --force || true) && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
+CMD ["sh", "-c", "set -x && php artisan migrate --force && echo 'Migrations complete' && (php artisan db:seed --force || echo 'Seeding skipped') && echo 'Running storage:link' && (php artisan storage:link || echo 'Storage link failed') && echo 'Starting server on port '${PORT:-8000} && php artisan serve --host=0.0.0.0 --port=${PORT:-8000} --verbose"]
 
