@@ -29,10 +29,6 @@ fi
 export SESSION_DRIVER=cookie
 export CACHE_STORE=array
 
-# Enable debug mode temporarily to see errors
-export APP_DEBUG=true
-export LOG_LEVEL=debug
-
 # Clear any cached config first (important!)
 echo "🧹 Clearing cached config..."
 php artisan config:clear || echo "Config clear failed"
