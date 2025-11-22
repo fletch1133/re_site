@@ -50,14 +50,17 @@ echo "🧪 Testing application..."
 php artisan about || echo "⚠️  App test failed"
 
 # Start the application
-# Railway provides the PORT environment variable
-PORT=${PORT:-8000}
+# Railway provides the PORT environment variable - DO NOT override it
+if [ -z "$PORT" ]; then
+    echo "❌ ERROR: PORT environment variable is not set!"
+    echo "Railway should set this automatically. Check Railway settings."
+    exit 1
+fi
+
 echo "🌐 Starting web server on port ${PORT}..."
 echo "📍 Document root: public/"
 echo "🔧 Environment: ${APP_ENV:-production}"
 echo "🔗 Server will be available at: http://0.0.0.0:${PORT}"
-echo "⚠️  IMPORTANT: Railway expects the app on this port!"
-echo "🔍 Railway PORT env var: ${PORT}"
 echo ""
 
 # Test if we can reach the app before starting the server
@@ -70,12 +73,18 @@ php artisan --version || echo "⚠️  Laravel bootstrap failed"
 
 echo ""
 echo "✅ Starting Laravel server..."
+echo "📝 Listening on 0.0.0.0:${PORT}"
 echo "📝 Request logs will appear below:"
-echo "🔍 If you don't see request logs after accessing the site, Railway isn't forwarding traffic!"
-echo "⚠️  DEBUG MODE ENABLED - Errors will be visible"
 echo ""
+
+# Test if we can bind to the port
+if command -v netstat &> /dev/null; then
+    echo "🔍 Checking if port ${PORT} is available..."
+    netstat -tuln | grep ":${PORT}" || echo "✅ Port ${PORT} is available"
+fi
 
 # Use artisan serve which handles Laravel routing and responses properly
 # The --no-reload flag prevents file watching which can cause issues
+echo "🚀 Starting server..."
 exec php artisan serve --host=0.0.0.0 --port=${PORT} --no-reload 2>&1
 
