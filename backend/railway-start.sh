@@ -46,14 +46,16 @@ php artisan view:cache
 echo "🧪 Testing application..."
 php artisan about || echo "⚠️  App test failed"
 
-# Start the application using artisan serve
+# Start the application using PHP built-in server
 # Railway provides the PORT environment variable
 echo "🌐 Starting web server on port ${PORT:-8000}..."
 echo "📍 Document root: public/"
 echo "🔧 Environment: ${APP_ENV:-production}"
 echo "🔍 Logs will be sent to stderr"
+echo ""
+echo "✅ Server starting..."
 
-# Use artisan serve which handles Laravel routing properly
-# Enable verbose output to see request logs
-php artisan serve --host=0.0.0.0 --port=${PORT:-8000} 2>&1
+# Use PHP built-in server directly (more reliable than artisan serve)
+# The -t flag sets the document root to public/
+cd /app && exec php -S 0.0.0.0:${PORT:-8000} -t public/ 2>&1
 
