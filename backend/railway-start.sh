@@ -29,6 +29,10 @@ php artisan route:clear || echo "Route clear failed"
 php artisan view:clear || echo "View clear failed"
 php artisan cache:clear || echo "Cache clear failed"
 
+# Test database connection
+echo "🔌 Testing database connection..."
+php artisan db:show || echo "⚠️  Database connection test failed"
+
 # Run migrations
 echo "🗄️  Running database migrations..."
 php artisan migrate --force --no-interaction || echo "⚠️  Migration failed or no migrations to run"

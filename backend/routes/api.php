@@ -6,6 +6,15 @@ use App\Http\Controllers\Api\ResumeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// Test route (no database)
+Route::get('/test', function () {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'API is working!',
+        'timestamp' => now()->toIso8601String(),
+    ]);
+});
+
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/projects', [ProjectController::class, 'index']);
