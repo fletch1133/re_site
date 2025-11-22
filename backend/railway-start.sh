@@ -67,7 +67,13 @@ php artisan --version || echo "⚠️  Laravel bootstrap failed"
 echo ""
 echo "✅ Starting server with PHP built-in server..."
 echo "📝 Request logs will appear below:"
+echo "🔍 If you don't see request logs after accessing the site, Railway isn't forwarding traffic!"
 echo ""
+
+# Test if the port is available
+if command -v nc &> /dev/null; then
+    nc -zv 0.0.0.0 ${PORT} 2>&1 || echo "Port ${PORT} is available"
+fi
 
 # Use PHP built-in server with Laravel's server.php router
 # This is more reliable than artisan serve for production
