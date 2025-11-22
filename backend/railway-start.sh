@@ -22,16 +22,17 @@ if [ ! -L "public/storage" ]; then
     php artisan storage:link || echo "Storage link already exists or failed"
 fi
 
+# Override session driver to use file instead of database
+# This prevents issues with database sessions on Railway
+export SESSION_DRIVER=file
+export CACHE_STORE=file
+
 # Clear any cached config first (important!)
 echo "🧹 Clearing cached config..."
 php artisan config:clear || echo "Config clear failed"
 php artisan route:clear || echo "Route clear failed"
 php artisan view:clear || echo "View clear failed"
 php artisan cache:clear || echo "Cache clear failed"
-
-# Test database connection
-echo "🔌 Testing database connection..."
-php artisan db:show || echo "⚠️  Database connection test failed"
 
 # Run migrations
 echo "🗄️  Running database migrations..."
