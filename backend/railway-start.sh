@@ -46,16 +46,22 @@ php artisan view:cache
 echo "🧪 Testing application..."
 php artisan about || echo "⚠️  App test failed"
 
-# Start the application using PHP built-in server
+# Start the application
 # Railway provides the PORT environment variable
-echo "🌐 Starting web server on port ${PORT:-8000}..."
+PORT=${PORT:-8000}
+echo "🌐 Starting web server on port ${PORT}..."
 echo "📍 Document root: public/"
 echo "🔧 Environment: ${APP_ENV:-production}"
-echo "🔍 Logs will be sent to stderr"
+echo "🔗 Server will be available at: http://0.0.0.0:${PORT}"
 echo ""
-echo "✅ Server starting..."
 
-# Use PHP built-in server directly (more reliable than artisan serve)
-# The -t flag sets the document root to public/
-cd /app && exec php -S 0.0.0.0:${PORT:-8000} -t public/ 2>&1
+# Test if we can reach the app before starting the server
+echo "🧪 Testing if Laravel can boot..."
+php -r "require 'vendor/autoload.php'; echo 'PHP OK\n';" || echo "⚠️  PHP test failed"
+
+echo ""
+echo "✅ Starting server..."
+
+# Use artisan serve - it handles Laravel routing properly
+exec php artisan serve --host=0.0.0.0 --port=${PORT} --no-reload 2>&1
 
