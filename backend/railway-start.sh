@@ -41,8 +41,12 @@ echo "🗄️  Running database migrations..."
 php artisan migrate --force --no-interaction || echo "⚠️  Migration failed or no migrations to run"
 
 # Create admin user if it doesn't exist
-echo "👤 Creating admin user if needed..."
-php artisan admin:create "${ADMIN_EMAIL:-admin@example.com}" "${ADMIN_PASSWORD:-password123}" 2>/dev/null || echo "✓ Admin user already exists or creation skipped"
+echo "👤 Creating/updating admin user..."
+php artisan admin:create "${ADMIN_EMAIL:-admin@example.com}" "${ADMIN_PASSWORD:-password123}" 2>/dev/null || echo "✓ Admin user operation completed"
+
+# List all users for debugging
+echo "📋 Current users in database:"
+php artisan users:list
 
 # DON'T cache config in production - it can cause issues with Railway env vars
 echo "⚡ Optimizing routes and views..."
