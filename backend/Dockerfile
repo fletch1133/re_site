@@ -41,5 +41,5 @@ RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs boots
 EXPOSE 8000
 
 # Start command - use exec form to ensure proper signal handling
-CMD ["sh", "-c", "php artisan migrate --force && php artisan db:seed --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
+CMD ["sh", "-c", "echo 'Starting application on port '${PORT:-8000} && php artisan migrate --force && (php artisan db:seed --force || true) && php artisan storage:link && echo 'Starting Laravel server...' && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
 
