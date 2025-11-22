@@ -51,7 +51,9 @@ php artisan about || echo "⚠️  App test failed"
 echo "🌐 Starting web server on port ${PORT:-8000}..."
 echo "📍 Document root: public/"
 echo "🔧 Environment: ${APP_ENV:-production}"
+echo "🔍 Logs will be sent to stderr"
 
 # Use artisan serve which handles Laravel routing properly
-php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+# Enable verbose output to see request logs
+php artisan serve --host=0.0.0.0 --port=${PORT:-8000} 2>&1
 
