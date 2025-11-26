@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-// Hardcoded resume info - update this when you change your resume
-const RESUME_PDF_URL = '/resume.pdf' // Put your resume.pdf in frontend/public/ folder
-const RESUME_NAME = 'Anthony_Fletcher_Resume.pdf'
-const RESUME_SIZE = 0 // Set to 0 or actual size in bytes if you want to display it
+// Hardcoded resume - file is in frontend/public/ folder
+const RESUME_PDF_URL = '/Anthony%20Fletcher%20RE%20Dev%20Resume.pdf'
+const RESUME_NAME = 'Anthony Fletcher RE Dev Resume.pdf'
 
 const loading = ref(false)
 const error = ref('')
@@ -83,10 +82,7 @@ onUnmounted(() => {
                   <span class="meta-icon">📄</span>
                   <span class="meta-text">PDF Document</span>
                 </div>
-                <div v-if="RESUME_SIZE > 0" class="resume-size">
-                  <span class="size-icon">💾</span>
-                  <span class="size-text">{{ (RESUME_SIZE / 1024 / 1024).toFixed(2) }} MB</span>
-                </div>
+
               </div>
             </div>
           </div>
@@ -100,9 +96,6 @@ onUnmounted(() => {
         <div class="viewer-toolbar">
           <div class="toolbar-left">
             <span class="doc-name">{{ RESUME_NAME }}</span>
-            <span v-if="RESUME_SIZE > 0" class="doc-size">
-              {{ (RESUME_SIZE / 1024 / 1024).toFixed(2) }} MB
-            </span>
           </div>
           <div class="toolbar-right">
             <a
