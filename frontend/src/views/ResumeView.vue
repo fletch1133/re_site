@@ -89,9 +89,9 @@ onUnmounted(() => {
 
           <!-- Mobile: Show image preview with buttons -->
           <div class="resume-card-mobile mobile-only">
-            <div class="mobile-preview">
-              <img src="/resume-preview.png" alt="Resume Preview" class="mobile-preview-image" />
-            </div>
+            <a :href="RESUME_PDF_URL" target="_blank" class="mobile-preview">
+              <img src="/resume-preview.png" alt="Resume Preview - Click to view" class="mobile-preview-image" />
+            </a>
             <div class="mobile-buttons">
               <a :href="RESUME_PDF_URL" target="_blank" class="mobile-btn mobile-btn-primary">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -597,9 +597,16 @@ onUnmounted(() => {
 }
 
 .mobile-preview {
+  display: block;
   width: 100%;
   background: #f8fafc;
   border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-preview:hover {
+  opacity: 0.9;
 }
 
 .mobile-preview-image {
