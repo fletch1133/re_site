@@ -17,12 +17,12 @@ function handleLogout() {
       <div class="container">
         <div class="nav-wrapper">
           <RouterLink to="/" class="logo">
-            <span class="logo-text">Anthony Fletcher</span>
+            <span class="logo-text">Anthony Fletcher Development</span>
           </RouterLink>
           <nav class="nav">
             <RouterLink to="/" class="nav-link">HOME</RouterLink>
-            <RouterLink to="/projects" class="nav-link nav-link-primary">PROJECTS</RouterLink>
             <RouterLink to="/about" class="nav-link">ABOUT</RouterLink>
+            <RouterLink to="/projects" class="nav-link nav-link-primary">PROJECTS</RouterLink>
             <RouterLink to="/resume" class="nav-link">RESUME</RouterLink>
             <RouterLink v-if="isAuthenticated" to="/admin" class="nav-link">ADMIN</RouterLink>
             <RouterLink v-if="!isAuthenticated" to="/login" class="nav-link nav-link-login">LOGIN</RouterLink>
