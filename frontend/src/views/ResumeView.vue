@@ -87,19 +87,11 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- Mobile: Show clean card with buttons -->
+          <!-- Mobile: Show image preview with buttons -->
           <div class="resume-card-mobile mobile-only">
-            <div class="mobile-icon">
-              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <polyline points="10 9 9 9 8 9"/>
-              </svg>
+            <div class="mobile-preview">
+              <img src="/resume-preview.png" alt="Resume Preview" class="mobile-preview-image" />
             </div>
-            <h3 class="mobile-title">{{ RESUME_NAME }}</h3>
-            <p class="mobile-description">View or download my professional resume</p>
             <div class="mobile-buttons">
               <a :href="RESUME_PDF_URL" target="_blank" class="mobile-btn mobile-btn-primary">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -598,36 +590,29 @@ onUnmounted(() => {
   background: white;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
-  padding: 3rem 2rem;
-  text-align: center;
+  overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   max-width: 400px;
   width: 100%;
 }
 
-.mobile-icon {
-  color: #2c5282;
-  margin-bottom: 1.5rem;
+.mobile-preview {
+  width: 100%;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.mobile-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 0.75rem 0;
-}
-
-.mobile-description {
-  color: #4a5568;
-  font-size: 1rem;
-  margin-bottom: 2rem;
-  line-height: 1.6;
+.mobile-preview-image {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .mobile-buttons {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding: 1.5rem;
 }
 
 .mobile-btn {
