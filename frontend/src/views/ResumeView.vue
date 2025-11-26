@@ -50,7 +50,8 @@ onUnmounted(() => {
     <section class="resume-section">
       <div class="container">
         <div class="resume-card-wrapper">
-          <div class="resume-card" @click="openFullscreen">
+          <!-- Desktop: Show PDF preview card -->
+          <div class="resume-card desktop-only" @click="openFullscreen">
             <div class="pdf-preview">
               <iframe
                 :src="RESUME_PDF_URL + '#toolbar=0&navpanes=0&scrollbar=0'"
@@ -82,8 +83,39 @@ onUnmounted(() => {
                   <span class="meta-icon">📄</span>
                   <span class="meta-text">PDF Document</span>
                 </div>
-
               </div>
+            </div>
+          </div>
+
+          <!-- Mobile: Show clean card with buttons -->
+          <div class="resume-card-mobile mobile-only">
+            <div class="mobile-icon">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </div>
+            <h3 class="mobile-title">{{ RESUME_NAME }}</h3>
+            <p class="mobile-description">View or download my professional resume</p>
+            <div class="mobile-buttons">
+              <a :href="RESUME_PDF_URL" target="_blank" class="mobile-btn mobile-btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                View Resume
+              </a>
+              <a :href="RESUME_PDF_URL" download class="mobile-btn mobile-btn-secondary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download PDF
+              </a>
             </div>
           </div>
         </div>
@@ -552,6 +584,87 @@ onUnmounted(() => {
   }
 }
 
+/* Desktop/Mobile visibility */
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
+/* Mobile Resume Card Styles */
+.resume-card-mobile {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 400px;
+  width: 100%;
+}
+
+.mobile-icon {
+  color: #2c5282;
+  margin-bottom: 1.5rem;
+}
+
+.mobile-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.75rem 0;
+}
+
+.mobile-description {
+  color: #4a5568;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.mobile-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mobile-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.mobile-btn-primary {
+  background-color: #2c5282;
+  color: white;
+}
+
+.mobile-btn-primary:hover {
+  background-color: #2a4365;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44, 82, 130, 0.4);
+}
+
+.mobile-btn-secondary {
+  background-color: #f7fafc;
+  color: #2c5282;
+  border: 2px solid #2c5282;
+}
+
+.mobile-btn-secondary:hover {
+  background-color: #ebf4ff;
+  transform: translateY(-2px);
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 2rem;
@@ -573,35 +686,13 @@ onUnmounted(() => {
     padding: 3rem 0 4rem;
   }
 
-  .resume-card {
-    max-width: 100%;
+  /* Hide desktop, show mobile */
+  .desktop-only {
+    display: none;
   }
 
-  .pdf-preview {
-    height: 400px;
-  }
-
-  .resume-content {
-    padding: 1.5rem;
-  }
-
-  .resume-title {
-    font-size: 1.5rem;
-  }
-
-  .resume-description {
-    font-size: 0.9375rem;
-  }
-
-  .resume-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-
-  .resume-size {
-    width: 100%;
-    justify-content: center;
+  .mobile-only {
+    display: block;
   }
 
   .viewer-toolbar {

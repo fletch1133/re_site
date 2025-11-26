@@ -17,6 +17,7 @@ function handleLogout() {
       <div class="container">
         <div class="nav-wrapper">
           <RouterLink to="/" class="logo">
+            <img src="/redevlogo.png" alt="Logo" class="logo-image" />
             <span class="logo-text">Anthony Fletcher Development</span>
           </RouterLink>
           <nav class="nav">
@@ -87,6 +88,13 @@ function handleLogout() {
   text-decoration: none;
   display: flex;
   align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-image {
+  height: 45px;
+  width: auto;
+  object-fit: contain;
 }
 
 .logo-text {
@@ -213,6 +221,10 @@ function handleLogout() {
     flex-wrap: wrap;
     justify-content: center;
     gap: 1rem;
+  }
+
+  .logo-image {
+    height: 35px;
   }
 
   .logo-text {
