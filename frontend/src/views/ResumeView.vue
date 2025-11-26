@@ -1,42 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import api from '../services/api'
 
-interface Resume {
-  id: number
-  pdf_path: string
-  pdf_original_name: string
-  pdf_size: number | null
-  created_at: string
-  updated_at: string
-}
+// Hardcoded resume info - update this when you change your resume
+const RESUME_PDF_URL = '/resume.pdf' // Put your resume.pdf in frontend/public/ folder
+const RESUME_NAME = 'Anthony_Fletcher_Resume.pdf'
+const RESUME_SIZE = 0 // Set to 0 or actual size in bytes if you want to display it
 
-const resume = ref<Resume | null>(null)
-const loading = ref(true)
+const loading = ref(false)
 const error = ref('')
 const showFullscreen = ref(false)
-
-const getPdfUrl = (path: string) => {
-  const storageBaseUrl = import.meta.env.VITE_STORAGE_BASE_URL || 'http://localhost:8000/storage'
-  return `${storageBaseUrl}/${path}`
-}
-
-async function fetchResume() {
-  loading.value = true
-  error.value = ''
-  try {
-    const response = await api.get('/resume')
-    resume.value = response.data
-  } catch (err: any) {
-    if (err.response?.status === 404) {
-      error.value = 'No resume available at this time.'
-    } else {
-      error.value = 'Failed to load resume. Please try again later.'
-    }
-  } finally {
-    loading.value = false
-  }
-}
 
 function openFullscreen() {
   showFullscreen.value = true
@@ -58,10 +30,6 @@ function handleEscKey(event: KeyboardEvent) {
   }
 }
 
-onMounted(() => {
-  fetchResume()
-})
-
 onUnmounted(() => {
   // Cleanup: ensure body scroll is restored and event listener is removed
   document.body.style.overflow = ''
@@ -82,20 +50,11 @@ onUnmounted(() => {
     <!-- Resume Content -->
     <section class="resume-section">
       <div class="container">
-        <div v-if="loading" class="loading">
-          <div class="spinner"></div>
-          <p>Loading resume...</p>
-        </div>
-
-        <div v-else-if="error" class="error">
-          <p>{{ error }}</p>
-        </div>
-
-        <div v-else-if="resume" class="resume-card-wrapper">
+        <div class="resume-card-wrapper">
           <div class="resume-card" @click="openFullscreen">
             <div class="pdf-preview">
               <iframe
-                :src="getPdfUrl(resume.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
+                :src="RESUME_PDF_URL + '#toolbar=0&navpanes=0&scrollbar=0'"
                 class="pdf-iframe"
                 title="Resume Preview"
                 scrolling="no"
@@ -117,16 +76,16 @@ onUnmounted(() => {
               </div>
             </div>
             <div class="resume-content">
-              <h3 class="resume-title">{{ resume.pdf_original_name }}</h3>
+              <h3 class="resume-title">{{ RESUME_NAME }}</h3>
               <p class="resume-description">Click to view the full resume with download options</p>
               <div class="resume-footer">
                 <div class="resume-meta">
                   <span class="meta-icon">📄</span>
                   <span class="meta-text">PDF Document</span>
                 </div>
-                <div v-if="resume.pdf_size" class="resume-size">
+                <div v-if="RESUME_SIZE > 0" class="resume-size">
                   <span class="size-icon">💾</span>
-                  <span class="size-text">{{ (resume.pdf_size / 1024 / 1024).toFixed(2) }} MB</span>
+                  <span class="size-text">{{ (RESUME_SIZE / 1024 / 1024).toFixed(2) }} MB</span>
                 </div>
               </div>
             </div>
@@ -136,18 +95,18 @@ onUnmounted(() => {
     </section>
 
     <!-- Fullscreen Modal -->
-    <div v-if="showFullscreen && resume" class="fullscreen-modal" @click.self="closeFullscreen">
+    <div v-if="showFullscreen" class="fullscreen-modal" @click.self="closeFullscreen">
       <div class="modal-viewer">
         <div class="viewer-toolbar">
           <div class="toolbar-left">
-            <span class="doc-name">{{ resume.pdf_original_name }}</span>
-            <span v-if="resume.pdf_size" class="doc-size">
-              {{ (resume.pdf_size / 1024 / 1024).toFixed(2) }} MB
+            <span class="doc-name">{{ RESUME_NAME }}</span>
+            <span v-if="RESUME_SIZE > 0" class="doc-size">
+              {{ (RESUME_SIZE / 1024 / 1024).toFixed(2) }} MB
             </span>
           </div>
           <div class="toolbar-right">
             <a
-              :href="getPdfUrl(resume.pdf_path)"
+              :href="RESUME_PDF_URL"
               download
               class="btn-download"
               @click.stop
@@ -160,7 +119,7 @@ onUnmounted(() => {
               DOWNLOAD
             </a>
             <a
-              :href="getPdfUrl(resume.pdf_path)"
+              :href="RESUME_PDF_URL"
               target="_blank"
               class="btn-newtab"
               @click.stop
@@ -184,7 +143,7 @@ onUnmounted(() => {
 
         <div class="document-container">
           <iframe
-            :src="getPdfUrl(resume.pdf_path)"
+            :src="RESUME_PDF_URL"
             class="document-iframe"
             title="Resume Document"
           ></iframe>
