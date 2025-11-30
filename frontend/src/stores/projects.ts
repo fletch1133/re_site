@@ -10,6 +10,9 @@ export interface Project {
   pdf_path: string
   pdf_original_name: string
   pdf_size: number | null
+  summary_pdf_path: string | null
+  summary_pdf_original_name: string | null
+  summary_pdf_size: number | null
   is_published: boolean
   created_at: string
   updated_at: string

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { useProjectsStore, type Project } from '../stores/projects'
 
 const projectsStore = useProjectsStore()
+const selectedProject = ref<Project | null>(null)
 
 onMounted(() => {
   projectsStore.fetchProjects()
@@ -45,6 +46,16 @@ const getCategoryDescription = (category: string) => {
       return ''
   }
 }
+
+function openProject(project: Project) {
+  selectedProject.value = project
+  document.body.style.overflow = 'hidden'
+}
+
+function closeProject() {
+  selectedProject.value = null
+  document.body.style.overflow = ''
+}
 </script>
 
 <template>
@@ -80,12 +91,8 @@ const getCategoryDescription = (category: string) => {
               <p class="category-description">{{ getCategoryDescription('single_family') }}</p>
             </div>
             <div class="projects-grid">
-              <div v-for="project in singleFamilyProjects" :key="project.id" class="project-card">
-                <a
-                  :href="projectsStore.getPdfUrl(project.pdf_path)"
-                  target="_blank"
-                  class="pdf-preview-link"
-                >
+              <div v-for="project in singleFamilyProjects" :key="project.id" class="project-card" @click="openProject(project)">
+                <div class="pdf-preview-link">
                   <div class="pdf-preview">
                     <iframe
                       :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
@@ -104,12 +111,12 @@ const getCategoryDescription = (category: string) => {
                             <polyline points="10 9 9 9 8 9"/>
                           </svg>
                         </div>
-                        <span class="overlay-text">View Full Document</span>
-                        <span class="overlay-subtext">Click to open PDF</span>
+                        <span class="overlay-text">View Documents</span>
+                        <span class="overlay-subtext">Click to view Pro Forma{{ project.summary_pdf_path ? ' & Summary' : '' }}</span>
                       </div>
                     </div>
                   </div>
-                </a>
+                </div>
                 <div class="project-content">
                   <h3 class="project-title">{{ project.title }}</h3>
                   <p v-if="project.description" class="project-description">{{ project.description }}</p>
@@ -135,12 +142,8 @@ const getCategoryDescription = (category: string) => {
               <p class="category-description">{{ getCategoryDescription('multi_family_commercial') }}</p>
             </div>
             <div class="projects-grid">
-              <div v-for="project in multiFamilyCommercialProjects" :key="project.id" class="project-card">
-                <a
-                  :href="projectsStore.getPdfUrl(project.pdf_path)"
-                  target="_blank"
-                  class="pdf-preview-link"
-                >
+              <div v-for="project in multiFamilyCommercialProjects" :key="project.id" class="project-card" @click="openProject(project)">
+                <div class="pdf-preview-link">
                   <div class="pdf-preview">
                     <iframe
                       :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
@@ -159,12 +162,12 @@ const getCategoryDescription = (category: string) => {
                             <polyline points="10 9 9 9 8 9"/>
                           </svg>
                         </div>
-                        <span class="overlay-text">View Full Document</span>
-                        <span class="overlay-subtext">Click to open PDF</span>
+                        <span class="overlay-text">View Documents</span>
+                        <span class="overlay-subtext">Click to view Pro Forma{{ project.summary_pdf_path ? ' & Summary' : '' }}</span>
                       </div>
                     </div>
                   </div>
-                </a>
+                </div>
                 <div class="project-content">
                   <h3 class="project-title">{{ project.title }}</h3>
                   <p v-if="project.description" class="project-description">{{ project.description }}</p>
@@ -190,12 +193,8 @@ const getCategoryDescription = (category: string) => {
               <p class="category-description">{{ getCategoryDescription('land_entitlements') }}</p>
             </div>
             <div class="projects-grid">
-              <div v-for="project in landEntitlementsProjects" :key="project.id" class="project-card">
-                <a
-                  :href="projectsStore.getPdfUrl(project.pdf_path)"
-                  target="_blank"
-                  class="pdf-preview-link"
-                >
+              <div v-for="project in landEntitlementsProjects" :key="project.id" class="project-card" @click="openProject(project)">
+                <div class="pdf-preview-link">
                   <div class="pdf-preview">
                     <iframe
                       :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
@@ -214,12 +213,12 @@ const getCategoryDescription = (category: string) => {
                             <polyline points="10 9 9 9 8 9"/>
                           </svg>
                         </div>
-                        <span class="overlay-text">View Full Document</span>
-                        <span class="overlay-subtext">Click to open PDF</span>
+                        <span class="overlay-text">View Documents</span>
+                        <span class="overlay-subtext">Click to view Pro Forma{{ project.summary_pdf_path ? ' & Summary' : '' }}</span>
                       </div>
                     </div>
                   </div>
-                </a>
+                </div>
                 <div class="project-content">
                   <h3 class="project-title">{{ project.title }}</h3>
                   <p v-if="project.description" class="project-description">{{ project.description }}</p>
@@ -240,6 +239,43 @@ const getCategoryDescription = (category: string) => {
         </div>
       </div>
     </section>
+
+    <!-- Project Detail Modal -->
+    <div v-if="selectedProject" class="project-modal-overlay" @click.self="closeProject">
+      <div class="project-modal">
+        <div class="modal-header">
+          <h2 class="modal-title">{{ selectedProject.title }}</h2>
+          <button @click="closeProject" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p v-if="selectedProject.description" class="modal-description">{{ selectedProject.description }}</p>
+
+          <!-- Pro Forma PDF -->
+          <div class="pdf-section">
+            <h3 class="pdf-section-title">Pro Forma</h3>
+            <div class="pdf-container">
+              <iframe
+                :src="projectsStore.getPdfUrl(selectedProject.pdf_path)"
+                class="modal-pdf-iframe"
+                :title="selectedProject.title + ' - Pro Forma'"
+              ></iframe>
+            </div>
+          </div>
+
+          <!-- Summary PDF (if exists) -->
+          <div v-if="selectedProject.summary_pdf_path" class="pdf-section">
+            <h3 class="pdf-section-title">Summary</h3>
+            <div class="pdf-container">
+              <iframe
+                :src="projectsStore.getPdfUrl(selectedProject.summary_pdf_path)"
+                class="modal-pdf-iframe"
+                :title="selectedProject.title + ' - Summary'"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -395,6 +431,7 @@ const getCategoryDescription = (category: string) => {
   flex-direction: column;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
 }
 
 .project-card:hover {
@@ -648,6 +685,137 @@ const getCategoryDescription = (category: string) => {
   .project-size {
     width: 100%;
     justify-content: center;
+  }
+}
+
+/* Project Modal Styles */
+.project-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.project-modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 2rem auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  background: white;
+  border-radius: 12px 12px 0 0;
+  z-index: 10;
+}
+
+.modal-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  cursor: pointer;
+  color: #6b7280;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #1a1a1a;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.modal-description {
+  color: #4a5568;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.pdf-section {
+  margin-bottom: 3rem;
+}
+
+.pdf-section:last-child {
+  margin-bottom: 0;
+}
+
+.pdf-section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c5282;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #2c5282;
+}
+
+.pdf-container {
+  background: #f8fafc;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.modal-pdf-iframe {
+  width: 100%;
+  height: 800px;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .project-modal-overlay {
+    padding: 1rem;
+  }
+
+  .project-modal {
+    margin: 1rem auto;
+  }
+
+  .modal-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+  }
+
+  .modal-pdf-iframe {
+    height: 500px;
+  }
+
+  .pdf-section-title {
+    font-size: 1.25rem;
   }
 }
 </style>

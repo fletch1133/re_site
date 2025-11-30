@@ -30,14 +30,15 @@ class ProjectController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'required|in:single_family,multi_family_commercial,land_entitlements',
-            'pdf' => 'required|file|mimes:pdf|max:10240', // 10MB max
+            'pdf' => 'required|file|mimes:pdf|max:10240', // 10MB max - Pro Forma
+            'summary_pdf' => 'nullable|file|mimes:pdf|max:10240', // 10MB max - Summary
             'is_published' => 'boolean',
         ]);
 
         $pdf = $request->file('pdf');
         $pdfPath = $pdf->store('projects', 'public');
 
-        $project = Project::create([
+        $projectData = [
             'title' => $request->title,
             'description' => $request->description,
             'category' => $request->category,
@@ -45,7 +46,18 @@ class ProjectController extends Controller
             'pdf_original_name' => $pdf->getClientOriginalName(),
             'pdf_size' => $pdf->getSize(),
             'is_published' => $request->is_published ?? true,
-        ]);
+        ];
+
+        // Handle summary PDF if provided
+        if ($request->hasFile('summary_pdf')) {
+            $summaryPdf = $request->file('summary_pdf');
+            $summaryPdfPath = $summaryPdf->store('projects', 'public');
+            $projectData['summary_pdf_path'] = $summaryPdfPath;
+            $projectData['summary_pdf_original_name'] = $summaryPdf->getClientOriginalName();
+            $projectData['summary_pdf_size'] = $summaryPdf->getSize();
+        }
+
+        $project = Project::create($projectData);
 
         return response()->json($project, 201);
     }
@@ -71,6 +83,7 @@ class ProjectController extends Controller
             'description' => 'nullable|string',
             'category' => 'sometimes|in:single_family,multi_family_commercial,land_entitlements',
             'pdf' => 'sometimes|file|mimes:pdf|max:10240',
+            'summary_pdf' => 'nullable|file|mimes:pdf|max:10240',
             'is_published' => 'boolean',
         ]);
 
@@ -86,6 +99,21 @@ class ProjectController extends Controller
             $project->pdf_size = $pdf->getSize();
         }
 
+        // Handle summary PDF
+        if ($request->hasFile('summary_pdf')) {
+            // Delete old summary PDF if exists
+            if ($project->summary_pdf_path) {
+                Storage::disk('public')->delete($project->summary_pdf_path);
+            }
+
+            $summaryPdf = $request->file('summary_pdf');
+            $summaryPdfPath = $summaryPdf->store('projects', 'public');
+
+            $project->summary_pdf_path = $summaryPdfPath;
+            $project->summary_pdf_original_name = $summaryPdf->getClientOriginalName();
+            $project->summary_pdf_size = $summaryPdf->getSize();
+        }
+
         $project->fill($request->only(['title', 'description', 'category', 'is_published']));
         $project->save();
 
@@ -99,8 +127,11 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($id);
 
-        // Delete PDF file
+        // Delete PDF files
         Storage::disk('public')->delete($project->pdf_path);
+        if ($project->summary_pdf_path) {
+            Storage::disk('public')->delete($project->summary_pdf_path);
+        }
 
         $project->delete();
 

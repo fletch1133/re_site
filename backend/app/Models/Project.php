@@ -13,6 +13,9 @@ class Project extends Model
         'pdf_path',
         'pdf_original_name',
         'pdf_size',
+        'summary_pdf_path',
+        'summary_pdf_original_name',
+        'summary_pdf_size',
         'is_published',
     ];
 

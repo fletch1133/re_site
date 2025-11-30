@@ -11,6 +11,7 @@ const title = ref('')
 const description = ref('')
 const category = ref<'single_family' | 'multi_family_commercial' | 'land_entitlements'>('single_family')
 const pdfFile = ref<File | null>(null)
+const summaryPdfFile = ref<File | null>(null)
 const isPublished = ref(true)
 const formError = ref('')
 
@@ -56,6 +57,7 @@ function resetForm() {
   description.value = ''
   category.value = 'single_family'
   pdfFile.value = null
+  summaryPdfFile.value = null
   isPublished.value = true
   formError.value = ''
 }
@@ -69,6 +71,13 @@ function handleFileChange(event: Event) {
   const target = event.target as HTMLInputElement
   if (target.files && target.files[0]) {
     pdfFile.value = target.files[0]
+  }
+}
+
+function handleSummaryFileChange(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    summaryPdfFile.value = target.files[0]
   }
 }
 
@@ -132,6 +141,10 @@ async function handleSubmit() {
 
   if (pdfFile.value) {
     formData.append('pdf', pdfFile.value)
+  }
+
+  if (summaryPdfFile.value) {
+    formData.append('summary_pdf', summaryPdfFile.value)
   }
 
   try {
@@ -237,7 +250,8 @@ async function handleDelete(id: number) {
                    project.category === 'multi_family_commercial' ? 'Multi-Family/Commercial' :
                    'Land Entitlements' }}
               </span>
-              <span class="file-name">{{ project.pdf_original_name }}</span>
+              <span class="file-name">Pro Forma: {{ project.pdf_original_name }}</span>
+              <span v-if="project.summary_pdf_original_name" class="file-name">Summary: {{ project.summary_pdf_original_name }}</span>
             </div>
           </div>
           <div class="project-actions">
@@ -302,12 +316,23 @@ async function handleDelete(id: number) {
             </div>
 
             <div class="form-group">
-              <label for="pdf">PDF File {{ editingProject ? '(leave empty to keep current)' : '*' }}</label>
+              <label for="pdf">Pro Forma PDF {{ editingProject ? '(leave empty to keep current)' : '*' }}</label>
               <input
                 id="pdf"
                 type="file"
                 accept=".pdf"
                 @change="handleFileChange"
+                class="form-control"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="summary_pdf">Summary PDF (optional)</label>
+              <input
+                id="summary_pdf"
+                type="file"
+                accept=".pdf"
+                @change="handleSummaryFileChange"
                 class="form-control"
               />
             </div>
