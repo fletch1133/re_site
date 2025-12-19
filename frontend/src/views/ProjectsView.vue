@@ -73,7 +73,7 @@ function closeProject() {
 }
 
 function downloadFile(path: string, filename: string) {
-  const url = projectsStore.getPdfUrl(path)
+  const url = projectsStore.getFileUrlWithCors(path)
   const link = document.createElement('a')
   link.href = url
   link.download = filename
@@ -122,7 +122,7 @@ function downloadFile(path: string, filename: string) {
                   <!-- PDF Preview -->
                   <div v-if="isPdfFile(project.pdf_path)" class="pdf-preview">
                     <iframe
-                      :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
+                      :src="projectsStore.getFileUrlWithCors(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
                       class="pdf-iframe"
                       :title="project.title"
                       scrolling="no"
@@ -192,7 +192,7 @@ function downloadFile(path: string, filename: string) {
                   <!-- PDF Preview -->
                   <div v-if="isPdfFile(project.pdf_path)" class="pdf-preview">
                     <iframe
-                      :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
+                      :src="projectsStore.getFileUrlWithCors(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
                       class="pdf-iframe"
                       :title="project.title"
                       scrolling="no"
@@ -262,7 +262,7 @@ function downloadFile(path: string, filename: string) {
                   <!-- PDF Preview -->
                   <div v-if="isPdfFile(project.pdf_path)" class="pdf-preview">
                     <iframe
-                      :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
+                      :src="projectsStore.getFileUrlWithCors(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
                       class="pdf-iframe"
                       :title="project.title"
                       scrolling="no"
@@ -339,7 +339,7 @@ function downloadFile(path: string, filename: string) {
             <!-- PDF: Show in iframe -->
             <div v-if="isPdfFile(selectedProject.pdf_path)" class="pdf-container">
               <iframe
-                :src="projectsStore.getPdfUrl(selectedProject.pdf_path)"
+                :src="projectsStore.getFileUrlWithCors(selectedProject.pdf_path)"
                 class="modal-pdf-iframe"
                 :title="selectedProject.title + ' - Pro Forma'"
               ></iframe>
@@ -358,7 +358,7 @@ function downloadFile(path: string, filename: string) {
             <h3 class="pdf-section-title">Summary</h3>
             <div class="pdf-container">
               <iframe
-                :src="projectsStore.getPdfUrl(selectedProject.summary_pdf_path)"
+                :src="projectsStore.getFileUrlWithCors(selectedProject.summary_pdf_path)"
                 class="modal-pdf-iframe"
                 :title="selectedProject.title + ' - Summary'"
               ></iframe>

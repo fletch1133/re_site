@@ -16,15 +16,17 @@ Route::get('/test', function () {
     ]);
 });
 
-// Serve storage files with CORS headers (for Excel preview)
+// Serve storage files with CORS headers (for Excel preview and PDFs)
 Route::get('/files/{path}', function (string $path) {
     $fullPath = storage_path('app/public/' . $path);
 
     if (!file_exists($fullPath)) {
-        abort(404);
+        // Log for debugging
+        \Log::error('File not found: ' . $fullPath);
+        return response()->json(['error' => 'File not found', 'path' => $fullPath], 404);
     }
 
-    $mimeType = mime_content_type($fullPath);
+    $mimeType = mime_content_type($fullPath) ?: 'application/octet-stream';
 
     return response()->file($fullPath, [
         'Access-Control-Allow-Origin' => '*',
