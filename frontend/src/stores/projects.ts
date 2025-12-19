@@ -100,6 +100,12 @@ export const useProjectsStore = defineStore('projects', () => {
     return `${storageBaseUrl}/${pdfPath}`
   }
 
+  // Get file URL with CORS support (for fetching files via JavaScript)
+  function getFileUrlWithCors(pdfPath: string) {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api'
+    return `${apiBaseUrl}/files/${pdfPath}`
+  }
+
   return {
     projects,
     loading,
@@ -108,7 +114,8 @@ export const useProjectsStore = defineStore('projects', () => {
     createProject,
     updateProject,
     deleteProject,
-    getPdfUrl
+    getPdfUrl,
+    getFileUrlWithCors
   }
 })
 

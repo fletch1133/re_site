@@ -316,11 +316,11 @@ async function handleDelete(id: number) {
             </div>
 
             <div class="form-group">
-              <label for="pdf">Pro Forma PDF {{ editingProject ? '(leave empty to keep current)' : '*' }}</label>
+              <label for="pdf">Pro Forma (PDF or Excel) {{ editingProject ? '(leave empty to keep current)' : '*' }}</label>
               <input
                 id="pdf"
                 type="file"
-                accept=".pdf"
+                accept=".pdf,.xlsx,.xls"
                 @change="handleFileChange"
                 class="form-control"
               />

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\ResumeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 // Test route (no database)
 Route::get('/test', function () {
@@ -14,6 +15,22 @@ Route::get('/test', function () {
         'timestamp' => now()->toIso8601String(),
     ]);
 });
+
+// Serve storage files with CORS headers (for Excel preview)
+Route::get('/files/{path}', function (string $path) {
+    $fullPath = storage_path('app/public/' . $path);
+
+    if (!file_exists($fullPath)) {
+        abort(404);
+    }
+
+    $mimeType = mime_content_type($fullPath);
+
+    return response()->file($fullPath, [
+        'Access-Control-Allow-Origin' => '*',
+        'Content-Type' => $mimeType,
+    ]);
+})->where('path', '.*');
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);

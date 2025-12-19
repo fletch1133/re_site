@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, computed, ref } from 'vue'
 import { useProjectsStore, type Project } from '../stores/projects'
+import ExcelViewer from '../components/ExcelViewer.vue'
+import ExcelPreview from '../components/ExcelPreview.vue'
 
 const projectsStore = useProjectsStore()
 const selectedProject = ref<Project | null>(null)
@@ -20,6 +22,19 @@ const multiFamilyCommercialProjects = computed(() =>
 const landEntitlementsProjects = computed(() =>
   projectsStore.projects.filter((p: Project) => p.category === 'land_entitlements')
 )
+
+// Check if a file is an Excel file based on path
+function isExcelFile(path: string): boolean {
+  if (!path) return false
+  const lowerPath = path.toLowerCase()
+  return lowerPath.endsWith('.xlsx') || lowerPath.endsWith('.xls')
+}
+
+// Check if a file is a PDF based on path
+function isPdfFile(path: string): boolean {
+  if (!path) return false
+  return path.toLowerCase().endsWith('.pdf')
+}
 
 const getCategoryTitle = (category: string) => {
   switch (category) {
@@ -55,6 +70,17 @@ function openProject(project: Project) {
 function closeProject() {
   selectedProject.value = null
   document.body.style.overflow = ''
+}
+
+function downloadFile(path: string, filename: string) {
+  const url = projectsStore.getPdfUrl(path)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.target = '_blank'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
 </script>
 
@@ -93,7 +119,8 @@ function closeProject() {
             <div class="projects-grid">
               <div v-for="project in singleFamilyProjects" :key="project.id" class="project-card" @click="openProject(project)">
                 <div class="pdf-preview-link">
-                  <div class="pdf-preview">
+                  <!-- PDF Preview -->
+                  <div v-if="isPdfFile(project.pdf_path)" class="pdf-preview">
                     <iframe
                       :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
                       class="pdf-iframe"
@@ -116,13 +143,31 @@ function closeProject() {
                       </div>
                     </div>
                   </div>
+                  <!-- Excel Preview -->
+                  <div v-else class="pdf-preview">
+                    <ExcelPreview :file-path="project.pdf_path" />
+                    <div class="preview-overlay">
+                      <div class="overlay-content">
+                        <div class="overlay-icon">
+                          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <path d="M8 13h2l2 3 2-3h2"/>
+                            <path d="M8 17h2l2-3 2 3h2"/>
+                          </svg>
+                        </div>
+                        <span class="overlay-text">View Spreadsheet</span>
+                        <span class="overlay-subtext">Click to view Pro Forma{{ project.summary_pdf_path ? ' & Summary' : '' }}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="project-content">
                   <h3 class="project-title">{{ project.title }}</h3>
                   <p v-if="project.description" class="project-description">{{ project.description }}</p>
                   <div class="project-footer">
                     <div class="project-meta">
-                      <span class="meta-icon">📄</span>
+                      <span class="meta-icon">{{ isExcelFile(project.pdf_path) ? '📊' : '📄' }}</span>
                       <span class="meta-text">{{ project.pdf_original_name }}</span>
                     </div>
                     <div v-if="project.pdf_size" class="project-size">
@@ -144,7 +189,8 @@ function closeProject() {
             <div class="projects-grid">
               <div v-for="project in multiFamilyCommercialProjects" :key="project.id" class="project-card" @click="openProject(project)">
                 <div class="pdf-preview-link">
-                  <div class="pdf-preview">
+                  <!-- PDF Preview -->
+                  <div v-if="isPdfFile(project.pdf_path)" class="pdf-preview">
                     <iframe
                       :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
                       class="pdf-iframe"
@@ -167,13 +213,31 @@ function closeProject() {
                       </div>
                     </div>
                   </div>
+                  <!-- Excel Preview -->
+                  <div v-else class="pdf-preview">
+                    <ExcelPreview :file-path="project.pdf_path" />
+                    <div class="preview-overlay">
+                      <div class="overlay-content">
+                        <div class="overlay-icon">
+                          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <path d="M8 13h2l2 3 2-3h2"/>
+                            <path d="M8 17h2l2-3 2 3h2"/>
+                          </svg>
+                        </div>
+                        <span class="overlay-text">View Spreadsheet</span>
+                        <span class="overlay-subtext">Click to view Pro Forma{{ project.summary_pdf_path ? ' & Summary' : '' }}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="project-content">
                   <h3 class="project-title">{{ project.title }}</h3>
                   <p v-if="project.description" class="project-description">{{ project.description }}</p>
                   <div class="project-footer">
                     <div class="project-meta">
-                      <span class="meta-icon">📄</span>
+                      <span class="meta-icon">{{ isExcelFile(project.pdf_path) ? '📊' : '📄' }}</span>
                       <span class="meta-text">{{ project.pdf_original_name }}</span>
                     </div>
                     <div v-if="project.pdf_size" class="project-size">
@@ -195,7 +259,8 @@ function closeProject() {
             <div class="projects-grid">
               <div v-for="project in landEntitlementsProjects" :key="project.id" class="project-card" @click="openProject(project)">
                 <div class="pdf-preview-link">
-                  <div class="pdf-preview">
+                  <!-- PDF Preview -->
+                  <div v-if="isPdfFile(project.pdf_path)" class="pdf-preview">
                     <iframe
                       :src="projectsStore.getPdfUrl(project.pdf_path) + '#toolbar=0&navpanes=0&scrollbar=0'"
                       class="pdf-iframe"
@@ -218,13 +283,31 @@ function closeProject() {
                       </div>
                     </div>
                   </div>
+                  <!-- Excel Preview -->
+                  <div v-else class="pdf-preview">
+                    <ExcelPreview :file-path="project.pdf_path" />
+                    <div class="preview-overlay">
+                      <div class="overlay-content">
+                        <div class="overlay-icon">
+                          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <path d="M8 13h2l2 3 2-3h2"/>
+                            <path d="M8 17h2l2-3 2 3h2"/>
+                          </svg>
+                        </div>
+                        <span class="overlay-text">View Spreadsheet</span>
+                        <span class="overlay-subtext">Click to view Pro Forma{{ project.summary_pdf_path ? ' & Summary' : '' }}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="project-content">
                   <h3 class="project-title">{{ project.title }}</h3>
                   <p v-if="project.description" class="project-description">{{ project.description }}</p>
                   <div class="project-footer">
                     <div class="project-meta">
-                      <span class="meta-icon">📄</span>
+                      <span class="meta-icon">{{ isExcelFile(project.pdf_path) ? '📊' : '📄' }}</span>
                       <span class="meta-text">{{ project.pdf_original_name }}</span>
                     </div>
                     <div v-if="project.pdf_size" class="project-size">
@@ -250,15 +333,23 @@ function closeProject() {
         <div class="modal-body">
           <p v-if="selectedProject.description" class="modal-description">{{ selectedProject.description }}</p>
 
-          <!-- Pro Forma PDF -->
+          <!-- Pro Forma Section -->
           <div class="pdf-section">
             <h3 class="pdf-section-title">Pro Forma</h3>
-            <div class="pdf-container">
+            <!-- PDF: Show in iframe -->
+            <div v-if="isPdfFile(selectedProject.pdf_path)" class="pdf-container">
               <iframe
                 :src="projectsStore.getPdfUrl(selectedProject.pdf_path)"
                 class="modal-pdf-iframe"
                 :title="selectedProject.title + ' - Pro Forma'"
               ></iframe>
+            </div>
+            <!-- Excel: Show using xlsx parser -->
+            <div v-else-if="isExcelFile(selectedProject.pdf_path)" class="excel-viewer-container">
+              <ExcelViewer
+                :file-path="selectedProject.pdf_path"
+                :file-name="selectedProject.pdf_original_name"
+              />
             </div>
           </div>
 
@@ -817,6 +908,101 @@ function closeProject() {
   .pdf-section-title {
     font-size: 1.25rem;
   }
+}
+
+/* Excel File Styles */
+.excel-card-preview {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.excel-preview-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.excel-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #217346;
+}
+
+.excel-download-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-radius: 8px;
+}
+
+.excel-download-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.excel-icon svg {
+  width: 64px;
+  height: 64px;
+}
+
+.excel-filename {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  max-width: 300px;
+  word-break: break-word;
+}
+
+.excel-hint {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.excel-download-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: #217346;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.excel-download-btn:hover {
+  background: #1a5c38;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 115, 70, 0.3);
+}
+
+.excel-download-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.excel-viewer-container {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
 }
 </style>
 

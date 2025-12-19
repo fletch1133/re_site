@@ -30,7 +30,7 @@ class ProjectController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'required|in:single_family,multi_family_commercial,land_entitlements',
-            'pdf' => 'required|file|mimes:pdf|max:10240', // 10MB max - Pro Forma
+            'pdf' => 'required|file|mimes:pdf,xlsx,xls|max:10240', // 10MB max - Pro Forma (PDF or Excel)
             'summary_pdf' => 'nullable|file|mimes:pdf|max:10240', // 10MB max - Summary
             'is_published' => 'boolean',
         ]);
@@ -82,7 +82,7 @@ class ProjectController extends Controller
             'title' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'sometimes|in:single_family,multi_family_commercial,land_entitlements',
-            'pdf' => 'sometimes|file|mimes:pdf|max:10240',
+            'pdf' => 'sometimes|file|mimes:pdf,xlsx,xls|max:10240', // Pro Forma (PDF or Excel)
             'summary_pdf' => 'nullable|file|mimes:pdf|max:10240',
             'is_published' => 'boolean',
         ]);
