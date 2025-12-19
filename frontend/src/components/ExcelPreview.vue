@@ -24,7 +24,10 @@ async function loadPreview() {
 
     const arrayBuffer = await response.arrayBuffer()
     const workbook = XLSX.read(arrayBuffer, { type: 'array' })
-    const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
+    const sheetName = workbook.SheetNames[0]
+    if (!sheetName) throw new Error('No sheets found')
+    const firstSheet = workbook.Sheets[sheetName]
+    if (!firstSheet) throw new Error('Sheet not found')
     const data = XLSX.utils.sheet_to_json<string[]>(firstSheet, { header: 1, defval: '' })
 
     // Only show first 8 rows for preview

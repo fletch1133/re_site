@@ -31,7 +31,9 @@ async function loadExcel() {
     const workbook = XLSX.read(arrayBuffer, { type: 'array' })
 
     sheets.value = workbook.SheetNames
-    activeSheet.value = workbook.SheetNames[0]
+    const firstSheetName = workbook.SheetNames[0]
+    if (!firstSheetName) throw new Error('No sheets found')
+    activeSheet.value = firstSheetName
 
     loadSheet(workbook, activeSheet.value)
   } catch (err: any) {
@@ -44,6 +46,7 @@ async function loadExcel() {
 
 function loadSheet(workbook: XLSX.WorkBook, sheetName: string) {
   const worksheet = workbook.Sheets[sheetName]
+  if (!worksheet) return
   const data = XLSX.utils.sheet_to_json<string[]>(worksheet, { header: 1, defval: '' })
   tableData.value = data as string[][]
 }
