@@ -40,7 +40,7 @@ function handleLogout() {
     <footer class="footer">
       <div class="container">
         <div class="footer-content">
-          <p class="footer-text">&copy; 2025 AF Technologies. All rights reserved.</p>
+          <p class="footer-text">&copy; 2026 AF Technologies. All rights reserved.</p>
         </div>
       </div>
     </footer>

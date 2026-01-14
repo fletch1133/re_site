@@ -1,13 +1,41 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import api from '@/services/api'
 
-// Hardcoded resume - file is in frontend/public/ folder
-const RESUME_PDF_URL = '/Anthony%20Fletcher%20RE%20Dev%20Resume.pdf'
-const RESUME_NAME = 'Anthony Fletcher RE Dev Resume.pdf'
-
-const loading = ref(false)
+// Resume data from backend
+const resume = ref<{ pdf_path: string; pdf_original_name: string; pdf_size: number } | null>(null)
+const loading = ref(true)
 const error = ref('')
 const showFullscreen = ref(false)
+
+// Compute the PDF URL from backend storage
+const storageBaseUrl = import.meta.env.VITE_STORAGE_BASE_URL || 'http://localhost:8000/storage'
+const resumePdfUrl = computed(() => {
+  if (resume.value?.pdf_path) {
+    return `${storageBaseUrl}/${resume.value.pdf_path}`
+  }
+  return ''
+})
+const resumeName = computed(() => resume.value?.pdf_original_name || 'Resume.pdf')
+
+// Fetch resume from backend API
+async function fetchResume() {
+  loading.value = true
+  error.value = ''
+  try {
+    const response = await api.get('/resume')
+    resume.value = response.data
+  } catch (err: any) {
+    if (err.response?.status === 404) {
+      error.value = 'No resume has been uploaded yet.'
+    } else {
+      error.value = 'Failed to load resume. Please try again later.'
+    }
+    console.error('Error fetching resume:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
 function openFullscreen() {
   showFullscreen.value = true
@@ -29,6 +57,10 @@ function handleEscKey(event: KeyboardEvent) {
   }
 }
 
+onMounted(() => {
+  fetchResume()
+})
+
 onUnmounted(() => {
   // Cleanup: ensure body scroll is restored and event listener is removed
   document.body.style.overflow = ''
@@ -49,12 +81,24 @@ onUnmounted(() => {
     <!-- Resume Content -->
     <section class="resume-section">
       <div class="container">
-        <div class="resume-card-wrapper">
+        <!-- Loading State -->
+        <div v-if="loading" class="loading">
+          <div class="spinner"></div>
+          <p>Loading resume...</p>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="error" class="error">
+          <p>{{ error }}</p>
+        </div>
+
+        <!-- Resume Card -->
+        <div v-else-if="resume" class="resume-card-wrapper">
           <!-- Desktop: Show PDF preview card -->
           <div class="resume-card desktop-only" @click="openFullscreen">
             <div class="pdf-preview">
               <iframe
-                :src="RESUME_PDF_URL + '#toolbar=0&navpanes=0&scrollbar=0'"
+                :src="resumePdfUrl + '#toolbar=0&navpanes=0&scrollbar=0'"
                 class="pdf-iframe"
                 title="Resume Preview"
                 scrolling="no"
@@ -76,7 +120,7 @@ onUnmounted(() => {
               </div>
             </div>
             <div class="resume-content">
-              <h3 class="resume-title">{{ RESUME_NAME }}</h3>
+              <h3 class="resume-title">{{ resumeName }}</h3>
               <p class="resume-description">Click to view the full resume with download options</p>
               <div class="resume-footer">
                 <div class="resume-meta">
@@ -89,18 +133,18 @@ onUnmounted(() => {
 
           <!-- Mobile: Show image preview with buttons -->
           <div class="resume-card-mobile mobile-only">
-            <a :href="RESUME_PDF_URL" target="_blank" class="mobile-preview">
+            <a :href="resumePdfUrl" target="_blank" class="mobile-preview">
               <img src="/resume-preview.png" alt="Resume Preview - Click to view" class="mobile-preview-image" />
             </a>
             <div class="mobile-buttons">
-              <a :href="RESUME_PDF_URL" target="_blank" class="mobile-btn mobile-btn-primary">
+              <a :href="resumePdfUrl" target="_blank" class="mobile-btn mobile-btn-primary">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                   <circle cx="12" cy="12" r="3"/>
                 </svg>
                 View Resume
               </a>
-              <a :href="RESUME_PDF_URL" download class="mobile-btn mobile-btn-secondary">
+              <a :href="resumePdfUrl" download class="mobile-btn mobile-btn-secondary">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="7 10 12 15 17 10"/>
@@ -119,11 +163,11 @@ onUnmounted(() => {
       <div class="modal-viewer">
         <div class="viewer-toolbar">
           <div class="toolbar-left">
-            <span class="doc-name">{{ RESUME_NAME }}</span>
+            <span class="doc-name">{{ resumeName }}</span>
           </div>
           <div class="toolbar-right">
             <a
-              :href="RESUME_PDF_URL"
+              :href="resumePdfUrl"
               download
               class="btn-download"
               @click.stop
@@ -136,7 +180,7 @@ onUnmounted(() => {
               DOWNLOAD
             </a>
             <a
-              :href="RESUME_PDF_URL"
+              :href="resumePdfUrl"
               target="_blank"
               class="btn-newtab"
               @click.stop
@@ -160,7 +204,7 @@ onUnmounted(() => {
 
         <div class="document-container">
           <iframe
-            :src="RESUME_PDF_URL"
+            :src="resumePdfUrl"
             class="document-iframe"
             title="Resume Document"
           ></iframe>
